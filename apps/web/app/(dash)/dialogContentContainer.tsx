@@ -4,7 +4,7 @@ import { createMemory, createSpace } from "../actions/doers";
 import ComboboxWithCreate from "@repo/ui/shadcn/combobox";
 import { toast } from "sonner";
 import { getSpaces } from "../actions/fetchers";
-import { MinusIcon, PlusCircleIcon } from "lucide-react";
+import { MinusIcon, PlusCircleIcon, HeartIcon, BookmarkIcon } from "lucide-react";
 import {
     DialogContent,
     DialogDescription,
@@ -100,6 +100,14 @@ export function DialogContentContainer({
             setSpaces(spaces.data);
         })();
     }, []);
+
+    const handleLike = () => {
+        setLikesCount((prev) => prev + 1);
+    };
+
+    const handleBookmark = () => {
+        setIsBookmarked((prev) => !prev);
+    };
 
     return (
         <DialogContent className="sm:max-w-[475px] text-[#F2F3F5] rounded-2xl bg-background z-[39]">
@@ -228,6 +236,13 @@ export function DialogContentContainer({
                         type="submit"
                     >
                         Save {autoDetectedType != "none" && autoDetectedType}
+                    </Button>
+                    <Button onClick={handleLike} className="ml-2">
+                        <HeartIcon className={`w-6 h-6 ${likesCount > 0 ? "text-red-500" : "text-gray-500"}`} />
+                        {likesCount}
+                    </Button>
+                    <Button onClick={handleBookmark} className="ml-2">
+                        <BookmarkIcon className={`w-6 h-6 ${isBookmarked ? "text-blue-500" : "text-gray-500"}`} />
                     </Button>
                 </DialogFooter>
             </form>
