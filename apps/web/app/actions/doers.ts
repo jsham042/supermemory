@@ -88,6 +88,35 @@ export const createSpace = async (
     }
 };
 
+export const createMemory = async (
+    content: string,
+    likes: number,
+    bookmarks: number
+): ServerActionReturnType<number> => {
+    const data = await auth();
+
+    if (!data || !data.user) {
+        redirect("/signin");
+        return { error: "Not authenticated", success: false };
+    }
+
+    try {
+        const resp = await db
+            .insert(storedContent)
+            .values({ content: content, likes: likes, bookmarks: bookmarks, user: data.user.id, createdAt: new Date() });
+
+        revalidatePath("/memories");
+        return { success: true, data: resp.meta.last_row_id };
+    } catch (e: unknown) {
+        const error = e as Error;
+        return {
+            success: false,
+            data: 0,
+            error: "Failed to create memory with error: " + error.message,
+        };
+    }
+};
+
 export const addLikeToMemory = async (memoryId: number): ServerActionReturnType<boolean> => {
     const data = await auth();
 
@@ -129,5 +158,3 @@ export const addBookmarkToMemory = async (memoryId: number): ServerActionReturnT
         return { success: false, data: false, error: (error as Error).message };
     }
 };
-
-// Rest of the existing functions remain unchanged
